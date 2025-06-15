@@ -1,6 +1,6 @@
 import modal
 
-APP_NAME = "analytics-service"
+APP_NAME = "llm-inference-agent-sandbox"
 WORKSPACE_DIR = "/workspace"
 
 app = modal.App.lookup(APP_NAME, create_if_missing=True)
