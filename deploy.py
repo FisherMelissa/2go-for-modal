@@ -2,8 +2,7 @@ import modal
 import os
 import time
 import datetime
-import pytz
-from apscheduler.schedulers.background import BackgroundScheduler
+import argparse
 
 # 使用更通用的应用名称
 APP_NAME = "scheduled_analytics"
@@ -38,6 +37,13 @@ def run_in_sandbox():
 
 def schedule_daily_run():
     """设置每天北京时间6点运行任务"""
+    try:
+        import pytz
+        from apscheduler.schedulers.background import BackgroundScheduler
+    except ImportError:
+        print("❌ 缺少依赖包，请先安装: pip install pytz apscheduler")
+        return
+    
     scheduler = BackgroundScheduler()
     
     # 设置北京时间时区
@@ -52,7 +58,7 @@ def schedule_daily_run():
         timezone=beijing_tz
     )
     
-    print(f"⏰ Scheduled daily run at 6:00 AM Beijing time")
+    print(f"⏰ 已设置每天北京时间6:00自动运行")
     scheduler.start()
     
     # 保持主线程运行
@@ -63,11 +69,9 @@ def schedule_daily_run():
         scheduler.shutdown()
 
 if __name__ == "__main__":
-    import argparse
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sandbox", action="store_true", help="Run app.py in Modal Sandbox immediately")
-    parser.add_argument("--schedule", action="store_true", help="Schedule daily run at 6:00 AM Beijing time")
+    parser.add_argument("--sandbox", action="store_true", help="立即在Modal沙箱中运行app.py")
+    parser.add_argument("--schedule", action="store_true", help="设置每天北京时间6:00自动运行")
     args = parser.parse_args()
 
     if args.sandbox:
@@ -75,4 +79,4 @@ if __name__ == "__main__":
     elif args.schedule:
         schedule_daily_run()
     else:
-        print("ℹ️ Use --sandbox to run immediately or --schedule to set daily run")
+        print("ℹ️ 使用 --sandbox 立即运行 或 --schedule 设置定时任务")
